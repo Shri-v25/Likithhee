@@ -47,7 +47,6 @@
             width: 300px;
             filter: drop-shadow(0 0 30px var(--gold));
             animation: float 4s ease-in-out infinite;
-            display: block;
         }
 
         h1 {
@@ -76,13 +75,10 @@
             margin-top: 30px;
             transition: 0.4s;
             letter-spacing: 4px;
+            z-index: 20;
         }
 
-        .start-btn:hover {
-            background: var(--gold);
-            color: black;
-            box-shadow: 0 0 50px var(--gold);
-        }
+        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 50px var(--gold); }
 
         /* ACT 2: Puzzle Area */
         #game-wrap {
@@ -101,13 +97,11 @@
             position: relative;
             width: 450px;
             height: 450px;
-            /* Using a subtle border to define the 'structured' area */
             outline: 2px solid rgba(197, 160, 89, 0.2);
             background: rgba(0,0,0,0.3);
             transition: all 0.8s ease-in-out;
         }
 
-        /* The Perfect Fusion State */
         #puzzle-container.fused {
             outline: 4px solid var(--gold);
             box-shadow: 0 0 80px var(--gold);
@@ -117,8 +111,9 @@
             position: absolute;
             cursor: grab;
             filter: drop-shadow(0 8px 15px rgba(0,0,0,0.8));
-            transition: filter 0.5s ease;
         }
+
+        .piece.fused { filter: none !important; transition: all 0.8s ease; }
 
         /* ACT 3: Transitions */
         #look-around, #letter-reveal {
@@ -142,7 +137,6 @@
             color: var(--pixel-green);
             font-size: clamp(1rem, 3vw, 1.5rem);
             margin-bottom: 30px;
-            text-shadow: 3px 3px #000;
         }
 
         .sister-msg {
@@ -153,12 +147,7 @@
             color: #fff;
         }
 
-        .gold-title {
-            font-family: 'Bebas Neue';
-            font-size: clamp(3rem, 8vw, 5rem);
-            color: var(--gold);
-            letter-spacing: 8px;
-        }
+        .gold-title { font-family: 'Bebas Neue'; font-size: clamp(3rem, 8vw, 5rem); color: var(--gold); letter-spacing: 8px; }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
     </style>
@@ -166,6 +155,8 @@
 <body>
 
 <div class="overlay"></div>
+
+<audio id="titans-track" src="titans.mp3" loop></audio>
 
 <div id="intro">
     <img src="mickey.png" class="mickey-img" alt="Birthday Mickey">
@@ -176,13 +167,13 @@
 
 <div id="game-wrap">
     <div id="status-pixel" style="font-family:'Press Start 2P'; color:var(--pixel-green); margin-bottom:25px; font-size: 0.8rem;">
-        [SYSTEM: ALIGNING SURPRISE PIXELS...]
+        [SYSTEM: LOADING TITANS PROTOCOL...]
     </div>
     <div id="puzzle-container"></div>
 </div>
 
 <div id="look-around">
-    <div class="pixel-msg">STRUCTURE STABILIZED.</div>
+    <div class="pixel-msg">MISSION COMPLETE.</div>
     <h2 class="gold-title">NOW... LOOK NEXT TO YOU.</h2>
     <button class="start-btn" onclick="revealLetter()">I SEE IT ❤️</button>
 </div>
@@ -199,6 +190,10 @@ const rows = 3, cols = 3, size = 150, tabSize = 35;
 const imgUrl = 'gift.jpeg'; 
 
 function startChallenge() {
+    // START THE MUSIC
+    const music = document.getElementById('titans-track');
+    music.play().catch(e => console.log("Music play blocked or file missing"));
+
     document.getElementById('intro').style.opacity = '0';
     setTimeout(() => {
         document.getElementById('intro').style.display = 'none';
@@ -213,7 +208,6 @@ function createPuzzle() {
     const container = document.getElementById('puzzle-container');
     container.innerHTML = '';
     let edges = [];
-
     for (let r = 0; r < rows; r++) {
         edges[r] = [];
         for (let c = 0; c < cols; c++) {
@@ -225,29 +219,15 @@ function createPuzzle() {
             };
         }
     }
-
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const piece = document.createElement('div');
             piece.className = 'piece';
             const path = createPiecePath(edges[r][c]);
-            
-            // The SVG now has a class we can target to "remove" the path later
-            piece.innerHTML = `
-                <svg width="${size + tabSize*2}" height="${size + tabSize*2}" viewBox="-${tabSize} -${tabSize} ${size + tabSize*2} ${size + tabSize*2}">
-                    <defs>
-                        <clipPath id="clip-${r}-${c}">
-                            <path class="jigsaw-shape" d="${path}" />
-                        </clipPath>
-                    </defs>
-                    <image xlink:href="${imgUrl}" x="-${c * size}" y="-${r * size}" width="${cols * size}" height="${rows * size}" clip-path="url(#clip-${r}-${c})" />
-                </svg>`;
-            
+            piece.innerHTML = `<svg width="${size + tabSize*2}" height="${size + tabSize*2}" viewBox="-${tabSize} -${tabSize} ${size + tabSize*2} ${size + tabSize*2}"><defs><clipPath id="clip-${r}-${c}"><path d="${path}" /></clipPath></defs><image xlink:href="${imgUrl}" x="-${c * size}" y="-${r * size}" width="${cols * size}" height="${rows * size}" clip-path="url(#clip-${r}-${c})" /></svg>`;
             piece.style.left = (c * size + (Math.random() * 160 - 80)) + "px";
             piece.style.top = (r * size + (Math.random() * 160 - 80)) + "px";
-            piece.dataset.x = c * size; 
-            piece.dataset.y = r * size;
-            
+            piece.dataset.x = c * size; piece.dataset.y = r * size;
             makeDraggable(piece);
             container.appendChild(piece);
         }
@@ -268,20 +248,16 @@ function makeDraggable(el) {
         el.style.zIndex = 100;
         let shiftX = e.clientX - el.getBoundingClientRect().left;
         let shiftY = e.clientY - el.getBoundingClientRect().top;
-        
         document.onpointermove = (e) => {
             el.style.left = (e.clientX - shiftX - document.getElementById('puzzle-container').offsetLeft) + 'px';
             el.style.top = (e.clientY - shiftY - document.getElementById('puzzle-container').offsetTop) + 'px';
         };
-        
         document.onpointerup = () => {
             document.onpointermove = null;
             el.style.zIndex = 20;
             if (Math.abs(parseInt(el.style.left) - el.dataset.x) < 35 && Math.abs(parseInt(el.style.top) - el.dataset.y) < 35) {
-                el.style.left = el.dataset.x + 'px';
-                el.style.top = el.dataset.y + 'px';
-                el.style.pointerEvents = 'none';
-                el.classList.add('snapped');
+                el.style.left = el.dataset.x + 'px'; el.style.top = el.dataset.y + 'px';
+                el.style.pointerEvents = 'none'; el.classList.add('snapped');
                 checkWin();
             }
         };
@@ -291,30 +267,21 @@ function makeDraggable(el) {
 function checkWin() {
     const snapped = document.querySelectorAll('.piece.snapped');
     if (snapped.length === rows * cols) {
-        const container = document.getElementById('puzzle-container');
-        
-        // --- MASTER FUSION LOGIC ---
         setTimeout(() => {
+            const container = document.getElementById('puzzle-container');
             container.classList.add('fused');
-            document.getElementById('status-pixel').innerHTML = "[SYSTEM: IMAGE STRUCTURE STABILIZED]";
-
+            document.getElementById('status-pixel').innerHTML = "[SYSTEM: STRUCTURE STABILIZED]";
             snapped.forEach(p => {
-                p.style.filter = "none"; // Remove shadow so they blend
+                p.style.filter = "none";
                 const img = p.querySelector('image');
-                // Remove clip-path to make the piece a perfect square (removes tabs)
                 img.setAttribute('clip-path', 'none'); 
-                // Adjust position to compensate for the removed clip-path offset
                 img.setAttribute('x', `-${p.dataset.x}`);
                 img.setAttribute('y', `-${p.dataset.y}`);
-                // Ensure SVG itself doesn't overflow
                 const svg = p.querySelector('svg');
                 svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
-                svg.setAttribute('width', size);
-                svg.setAttribute('height', size);
-                p.style.top = p.dataset.y + 'px';
-                p.style.left = p.dataset.x + 'px';
+                svg.setAttribute('width', size); svg.setAttribute('height', size);
+                p.style.top = p.dataset.y + 'px'; p.style.left = p.dataset.x + 'px';
             });
-
             setTimeout(() => {
                 const look = document.getElementById('look-around');
                 look.style.display = 'flex';
@@ -325,11 +292,10 @@ function checkWin() {
 }
 
 function revealLetter() {
-    const look = document.getElementById('look-around');
-    const letter = document.getElementById('letter-reveal');
-    look.style.opacity = '0';
+    document.getElementById('look-around').style.opacity = '0';
     setTimeout(() => {
-        look.style.display = 'none';
+        document.getElementById('look-around').style.display = 'none';
+        const letter = document.getElementById('letter-reveal');
         letter.style.display = 'flex';
         setTimeout(() => letter.style.opacity = '1', 100);
         startGlitters();
@@ -339,13 +305,10 @@ function revealLetter() {
 function startGlitters() {
     setInterval(() => {
         const g = document.createElement('div');
-        g.style.position = 'fixed';
-        g.style.width = g.style.height = Math.random() * 6 + 'px';
+        g.style.position = 'fixed'; g.style.width = g.style.height = Math.random() * 6 + 'px';
         g.style.background = Math.random() > 0.5 ? 'var(--gold)' : 'white';
-        g.style.left = Math.random() * 100 + 'vw';
-        g.style.top = '-10px';
-        g.style.zIndex = '300';
-        g.style.borderRadius = '50%';
+        g.style.left = Math.random() * 100 + 'vw'; g.style.top = '-10px';
+        g.style.zIndex = '300'; g.style.borderRadius = '50%';
         g.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(105vh)' }], { duration: 2000 + Math.random() * 2000 });
         document.body.appendChild(g);
         setTimeout(() => g.remove(), 4000);
