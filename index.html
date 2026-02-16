@@ -3,260 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HAPPY BIRTHDAY LIKHITH!</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <title>HAPPY BIRTHDAY LIKHITHEEE !!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Montserrat:wght@300&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #d4af37;
-            --rb-dark: #0f0f0f;
-            --rb-accent: #2c1a1a;
-            --text-glow: 0 0 15px rgba(212, 175, 55, 0.6);
+            --gold: #c5a059;
+            --dark-red: #2c0a0a;
+            --bg: #0a0a0a;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            background-color: var(--rb-dark);
+            margin: 0; padding: 0;
+            background: var(--bg);
             color: white;
-            font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
-            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* Cinematic Background */
-        .bg-overlay {
+        /* R&B Gradient Overlay */
+        .overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-            z-index: -1;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(44, 10, 10, 0.4) 0%, rgba(10, 10, 10, 1) 80%);
+            pointer-events: none;
+            z-index: 1;
         }
 
         /* Intro Screen */
-        #intro-screen {
+        #intro {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             text-align: center;
-            animation: fadeIn 2s ease-in;
+            transition: opacity 1s ease;
         }
 
-        .mickey-container img {
-            width: 250px;
-            filter: drop-shadow(0 0 20px var(--gold));
-            animation: float 3s ease-in-out infinite;
+        .mickey-img {
+            width: 280px;
+            filter: drop-shadow(0 0 20px rgba(197, 160, 89, 0.3));
+            animation: float 4s ease-in-out infinite;
         }
 
         h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 3.5rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 5rem;
+            letter-spacing: 8px;
+            margin: 10px 0;
             color: var(--gold);
-            text-shadow: var(--text-glow);
-            margin: 20px 0;
-            letter-spacing: 5px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
-        .btn-start {
-            padding: 15px 40px;
-            background: transparent;
-            border: 2px solid var(--gold);
+        .subtitle {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .start-btn {
+            background: none;
+            border: 1px solid var(--gold);
             color: var(--gold);
-            font-family: 'Cinzel', serif;
+            padding: 15px 50px;
+            font-family: 'Bebas Neue';
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: 0.3s;
-            font-size: 1.2rem;
-            margin-top: 20px;
+            transition: all 0.4s;
+            letter-spacing: 2px;
         }
 
-        .btn-start:hover {
+        .start-btn:hover {
             background: var(--gold);
             color: black;
-            box-shadow: var(--text-glow);
+            box-shadow: 0 0 30px var(--gold);
         }
 
-        /* Puzzle Section */
-        #puzzle-container {
+        /* Puzzle Area */
+        #game-wrap {
             display: none;
+            position: relative;
+            z-index: 2;
             flex-direction: column;
             align-items: center;
-            padding: 50px 20px;
+            justify-content: center;
+            height: 100vh;
         }
 
-        #board {
-            display: grid;
-            grid-template-columns: repeat(3, 120px);
-            grid-template-rows: repeat(3, 120px);
-            gap: 5px;
-            border: 5px solid var(--gold);
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            background: #222;
+        #puzzle-container {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            border: 1px solid #333;
+            background: rgba(255,255,255,0.02);
         }
 
-        .tile {
-            width: 120px;
-            height: 120px;
-            cursor: pointer;
-            background-size: 360px 360px;
-            border: 0.5px solid rgba(255,255,255,0.1);
-            transition: transform 0.2s;
+        .piece {
+            position: absolute;
+            cursor: grab;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
         }
 
-        /* Success Message */
-        #victory-message {
+        .piece:active { cursor: grabbing; }
+
+        /* Victory Message */
+        #victory {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 10;
             text-align: center;
-            z-index: 100;
-        }
-
-        .glitter {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: var(--gold);
-            border-radius: 50%;
-            pointer-events: none;
         }
 
         /* Animations */
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .glitter {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+            animation: fall 3s linear infinite;
         }
 
-        @keyframes glitter-anim {
-            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) scale(0); opacity: 1; }
+            100% { transform: translateY(100vh) scale(1); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-overlay"></div>
+<div class="overlay"></div>
 
-    <div id="intro-screen">
-        <div class="mickey-container">
-            <img src="https://www.pngarts.com/files/3/Mickey-Mouse-PNG-Transparent-Image.png" alt="Mickey Mouse">
-        </div>
-        <h1>HAPPY BIRTHDAY LIKHITHEEE !!</h1>
-        <p style="font-style: italic; color: #888;">Solve the puzzle to reveal your surprise...</p>
-        <button class="btn-start" onclick="startPuzzle()">ENTER THE VIBE</button>
-    </div>
+<div id="intro">
+    <img src="mickey.jpeg" alt="Mickey Birthday" class="mickey-img">
+    <h1>HAPPY BIRTHDAY LIKHITHEEE !!</h1>
+    <div class="subtitle">A special vibe for a legend...</div>
+    <button class="start-btn" onclick="initGame()">UNWRAP THE VIBE</button>
+</div>
 
-    <div id="puzzle-container">
-        <h2 style="font-family: 'Cinzel'; color: var(--gold);">THE GIFT PUZZLE</h2>
-        <div id="board"></div>
-        <p id="status" style="margin-top: 20px; color: var(--gold);"></p>
-    </div>
+<div id="game-wrap">
+    <h2 style="font-family: 'Bebas Neue'; color: var(--gold); font-size: 2rem;">Solve to Reveal</h2>
+    <div id="puzzle-container"></div>
+</div>
 
-    <div id="victory-message">
-        <h1 style="font-size: 4rem;">LOOK NEXT TO YOU! 🎁</h1>
-        <p style="font-size: 1.5rem; color: #fff;">Happy Birthday, Legend.</p>
-    </div>
+<div id="victory">
+    <h1 style="font-size: 6rem; line-height: 1;">IT'S YOURS.</h1>
+    <p class="subtitle" style="font-size: 3rem;">Look next to you, Likhith...</p>
+</div>
 
-    <script>
-        const board = document.getElementById('board');
-        const intro = document.getElementById('intro-screen');
-        const puzzleCont = document.getElementById('puzzle-container');
-        const victory = document.getElementById('victory-message');
-        
-        let tiles = [];
-        const imageSrc = 'gift.jpeg'; // Ensure your image is named this
+<script>
+const rows = 3;
+const cols = 3;
+const size = 150; // Size of each piece
+const tabSize = 30;
+const imgUrl = 'gift.jpeg';
 
-        function startPuzzle() {
-            intro.style.display = 'none';
-            puzzleCont.style.display = 'flex';
-            initGame();
+function initGame() {
+    document.getElementById('intro').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('intro').style.display = 'none';
+        document.getElementById('game-wrap').style.display = 'flex';
+        createPuzzle();
+        startGlitters();
+    }, 1000);
+}
+
+function createPuzzle() {
+    const container = document.getElementById('puzzle-container');
+    let edges = [];
+
+    // Generate edge logic
+    for (let r = 0; r < rows; r++) {
+        edges[r] = [];
+        for (let c = 0; c < cols; c++) {
+            edges[r][c] = { 
+                top: (r === 0) ? 0 : -edges[r-1][c].bottom,
+                left: (c === 0) ? 0 : -edges[r][c-1].right,
+                bottom: (r === rows-1) ? 0 : (Math.random() > 0.5 ? 1 : -1),
+                right: (c === cols-1) ? 0 : (Math.random() > 0.5 ? 1 : -1)
+            };
         }
+    }
 
-        function initGame() {
-            // Create 3x3 grid (9 pieces)
-            let positions = [...Array(9).keys()];
-            // Shuffle
-            positions.sort(() => Math.random() - 0.5);
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const piece = document.createElement('div');
+            piece.className = 'piece';
+            
+            // Generate the SVG Path
+            const path = createPiecePath(edges[r][c]);
+            
+            // Piece Setup
+            const svg = `
+                <svg width="${size + tabSize*2}" height="${size + tabSize*2}" viewBox="-${tabSize} -${tabSize} ${size + tabSize*2} ${size + tabSize*2}">
+                    <defs>
+                        <clipPath id="clip${r}${c}">
+                            <path d="${path}" />
+                        </clipPath>
+                    </defs>
+                    <image xlink:href="${imgUrl}" 
+                        x="-${c * size}" y="-${r * size}" 
+                        width="${cols * size}" height="${rows * size}" 
+                        clip-path="url(#clip${r}${c})" />
+                </svg>
+            `;
+            
+            piece.innerHTML = svg;
+            
+            // Random Scatter Position
+            const startX = Math.random() * 200 - 100;
+            const startY = Math.random() * 200 - 100;
+            piece.style.left = (c * size + startX) + "px";
+            piece.style.top = (r * size + startY) + "px";
 
-            positions.forEach((pos, index) => {
-                const tile = document.createElement('div');
-                tile.classList.add('tile');
-                tile.style.backgroundImage = `url(${imageSrc})`;
-                
-                // Calculate background position
-                const r = Math.floor(pos / 3);
-                const c = pos % 3;
-                tile.style.backgroundPosition = `-${c * 120}px -${r * 120}px`;
-                
-                tile.dataset.index = index;
-                tile.dataset.correctPos = pos;
-                tile.addEventListener('click', swapTiles);
-                board.appendChild(tile);
-                tiles.push(tile);
-            });
+            // Store correct position
+            piece.dataset.correctX = c * size;
+            piece.dataset.correctY = r * size;
+            
+            makeDraggable(piece);
+            container.appendChild(piece);
         }
+    }
+}
 
-        let firstTile = null;
+function createPiecePath(e) {
+    let p = `M 0 0`;
+    // Top
+    p += horizontalEdge(0, 0, size, e.top, true);
+    // Right
+    p += verticalEdge(size, 0, size, e.right, false);
+    // Bottom
+    p += horizontalEdge(size, size, -size, e.bottom, false);
+    // Left
+    p += verticalEdge(0, size, -size, e.left, true);
+    return p + " Z";
+}
 
-        function swapTiles() {
-            if (!firstTile) {
-                firstTile = this;
-                this.style.outline = "2px solid white";
-            } else {
-                // Swap logic
-                const tempBG = this.style.backgroundPosition;
-                const tempPos = this.dataset.correctPos;
+function horizontalEdge(x, y, length, type, top) {
+    let dir = length > 0 ? 1 : -1;
+    let mid = x + length/2;
+    if (type === 0) return ` L ${x+length} ${y}`;
+    let curveDir = top ? -1 : 1;
+    return ` L ${mid - dir*tabSize} ${y} C ${mid - dir*tabSize/2} ${y + curveDir*tabSize*type} ${mid + dir*tabSize/2} ${y + curveDir*tabSize*type} ${mid + dir*tabSize} ${y} L ${x+length} ${y}`;
+}
 
-                this.style.backgroundPosition = firstTile.style.backgroundPosition;
-                this.dataset.correctPos = firstTile.dataset.correctPos;
+function verticalEdge(x, y, length, type, left) {
+    let dir = length > 0 ? 1 : -1;
+    let mid = y + length/2;
+    if (type === 0) return ` L ${x} ${y+length}`;
+    let curveDir = left ? 1 : -1;
+    return ` L ${x} ${mid - dir*tabSize} C ${x + curveDir*tabSize*type} ${mid - dir*tabSize/2} ${x + curveDir*tabSize*type} ${mid + dir*tabSize/2} ${x} ${mid + dir*tabSize} L ${x} ${y+length}`;
+}
 
-                firstTile.style.backgroundPosition = tempBG;
-                firstTile.dataset.correctPos = tempPos;
+function makeDraggable(el) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    el.onpointerdown = (e) => {
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onpointermove = (e) => {
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            el.style.top = (el.offsetTop - pos2) + "px";
+            el.style.left = (el.offsetLeft - pos1) + "px";
+        };
+        document.onpointerup = () => {
+            document.onpointermove = null;
+            checkSnap(el);
+        };
+    };
+}
 
-                firstTile.style.outline = "none";
-                firstTile = null;
-                checkWin();
-            }
-        }
+function checkSnap(el) {
+    const curX = parseInt(el.style.left);
+    const curY = parseInt(el.style.top);
+    const tarX = parseInt(el.dataset.correctX);
+    const tarY = parseInt(el.dataset.correctY);
 
-        function checkWin() {
-            const currentOrder = Array.from(document.querySelectorAll('.tile')).map((t, i) => {
-                // This logic checks if the background position matches the grid index
-                const r = Math.floor(i / 3);
-                const c = i % 3;
-                const expected = `-${c * 120}px -${r * 120}px`;
-                return t.style.backgroundPosition === expected;
-            });
+    if (Math.abs(curX - tarX) < 20 && Math.abs(curY - tarY) < 20) {
+        el.style.left = tarX + "px";
+        el.style.top = tarY + "px";
+        el.style.pointerEvents = 'none';
+        el.style.zIndex = "1";
+        checkWin();
+    }
+}
 
-            if (currentOrder.every(val => val === true)) {
-                showVictory();
-            }
-        }
+function checkWin() {
+    const pieces = document.querySelectorAll('.piece');
+    const locked = Array.from(pieces).filter(p => p.style.pointerEvents === 'none');
+    if (locked.length === rows * cols) {
+        document.getElementById('game-wrap').style.opacity = '0.3';
+        document.getElementById('victory').style.display = 'block';
+    }
+}
 
-        function showVictory() {
-            puzzleCont.style.opacity = '0.2';
-            victory.style.display = 'block';
-            createGlitters();
-        }
+function startGlitters() {
+    setInterval(() => {
+        const g = document.createElement('div');
+        g.className = 'glitter';
+        const size = Math.random() * 4 + 'px';
+        g.style.width = size;
+        g.style.height = size;
+        g.style.left = Math.random() * 100 + 'vw';
+        g.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        g.style.background = Math.random() > 0.5 ? 'var(--gold)' : 'white';
+        document.body.appendChild(g);
+        setTimeout(() => g.remove(), 4000);
+    }, 150);
+}
+</script>
 
-        function createGlitters() {
-            for (let i = 0; i < 100; i++) {
-                const g = document.createElement('div');
-                g.classList.add('glitter');
-                g.style.left = Math.random() * 100 + 'vw';
-                g.style.top = -10 + 'px';
-                g.style.animation = `glitter-anim ${Math.random() * 2 + 2}s linear forwards`;
-                document.body.appendChild(g);
-            }
-        }
-    </script>
 </body>
 </html>
