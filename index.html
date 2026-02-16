@@ -44,9 +44,10 @@
         }
 
         .mickey-img {
-            width: 320px;
+            width: 300px;
             filter: drop-shadow(0 0 30px var(--gold));
             animation: float 4s ease-in-out infinite;
+            display: block;
         }
 
         h1 {
@@ -55,6 +56,13 @@
             letter-spacing: 12px;
             color: var(--gold);
             margin: 10px 0;
+            text-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+        }
+
+        .subtitle {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-top: -10px;
         }
 
         .start-btn {
@@ -70,9 +78,13 @@
             letter-spacing: 4px;
         }
 
-        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 50px var(--gold); }
+        .start-btn:hover {
+            background: var(--gold);
+            color: black;
+            box-shadow: 0 0 50px var(--gold);
+        }
 
-        /* ACT 2: Puzzle */
+        /* ACT 2: Puzzle Area */
         #game-wrap {
             display: none;
             opacity: 0;
@@ -89,25 +101,23 @@
             position: relative;
             width: 450px;
             height: 450px;
-            /* Container now hides the messy outer tabs during the game */
-            outline: 1px solid rgba(255,255,255,0.1);
+            /* Using a subtle border to define the 'structured' area */
+            outline: 2px solid rgba(197, 160, 89, 0.2);
+            background: rgba(0,0,0,0.3);
+            transition: all 0.8s ease-in-out;
+        }
+
+        /* The Perfect Fusion State */
+        #puzzle-container.fused {
+            outline: 4px solid var(--gold);
+            box-shadow: 0 0 80px var(--gold);
         }
 
         .piece {
             position: absolute;
             cursor: grab;
             filter: drop-shadow(0 8px 15px rgba(0,0,0,0.8));
-        }
-
-        /* This handles the "Structured" Fusion */
-        .piece.fused {
-            filter: none !important;
-            transition: all 0.8s ease;
-        }
-
-        .piece.fused svg {
-            /* We remove the clip path or expand it to make the image a perfect square again */
-            clip-path: none !important;
+            transition: filter 0.5s ease;
         }
 
         /* ACT 3: Transitions */
@@ -160,19 +170,19 @@
 <div id="intro">
     <img src="mickey.png" class="mickey-img" alt="Birthday Mickey">
     <h1>HAPPY BIRTHDAY LIKHITHEEE !!</h1>
-    <div style="font-family: 'Great Vibes'; font-size: 2rem; color: white;">A special vibe for a legend...</div>
+    <div class="subtitle">A special vibe for a legend...</div>
     <button class="start-btn" onclick="startChallenge()">ENTER THE VIBE</button>
 </div>
 
 <div id="game-wrap">
     <div id="status-pixel" style="font-family:'Press Start 2P'; color:var(--pixel-green); margin-bottom:25px; font-size: 0.8rem;">
-        [SYSTEM: RECONSTRUCTING GIFT DATA...]
+        [SYSTEM: ALIGNING SURPRISE PIXELS...]
     </div>
     <div id="puzzle-container"></div>
 </div>
 
 <div id="look-around">
-    <div class="pixel-msg">SURPRISE DECRYPTED.</div>
+    <div class="pixel-msg">STRUCTURE STABILIZED.</div>
     <h2 class="gold-title">NOW... LOOK NEXT TO YOU.</h2>
     <button class="start-btn" onclick="revealLetter()">I SEE IT ❤️</button>
 </div>
@@ -185,18 +195,16 @@
 </div>
 
 <script>
-const rows = 3, cols = 3, size = 150, tabSize = 38;
+const rows = 3, cols = 3, size = 150, tabSize = 35;
 const imgUrl = 'gift.jpeg'; 
 
 function startChallenge() {
-    const intro = document.getElementById('intro');
-    const gameWrap = document.getElementById('game-wrap');
-    intro.style.opacity = '0';
+    document.getElementById('intro').style.opacity = '0';
     setTimeout(() => {
-        intro.style.display = 'none';
-        gameWrap.style.display = 'flex';
-        void gameWrap.offsetWidth;
-        gameWrap.style.opacity = '1';
+        document.getElementById('intro').style.display = 'none';
+        const game = document.getElementById('game-wrap');
+        game.style.display = 'flex';
+        setTimeout(() => game.style.opacity = '1', 50);
         createPuzzle();
     }, 1000);
 }
@@ -224,23 +232,17 @@ function createPuzzle() {
             piece.className = 'piece';
             const path = createPiecePath(edges[r][c]);
             
+            // The SVG now has a class we can target to "remove" the path later
             piece.innerHTML = `
-                <svg width="${size + tabSize*2}" height="${size + tabSize*2}" 
-                     viewBox="-${tabSize} -${tabSize} ${size + tabSize*2} ${size + tabSize*2}"
-                     style="position: absolute; top: -${tabSize}px; left: -${tabSize}px;">
+                <svg width="${size + tabSize*2}" height="${size + tabSize*2}" viewBox="-${tabSize} -${tabSize} ${size + tabSize*2} ${size + tabSize*2}">
                     <defs>
-                        <clipPath id="c${r}${c}">
-                            <path class="jigsaw-path" d="${path}" />
+                        <clipPath id="clip-${r}-${c}">
+                            <path class="jigsaw-shape" d="${path}" />
                         </clipPath>
                     </defs>
-                    <image xlink:href="${imgUrl}" 
-                           x="-${c * size}" y="-${r * size}" 
-                           width="${cols * size}" height="${rows * size}" 
-                           clip-path="url(#c${r}${c})" />
+                    <image xlink:href="${imgUrl}" x="-${c * size}" y="-${r * size}" width="${cols * size}" height="${rows * size}" clip-path="url(#clip-${r}-${c})" />
                 </svg>`;
             
-            piece.style.width = size + "px";
-            piece.style.height = size + "px";
             piece.style.left = (c * size + (Math.random() * 160 - 80)) + "px";
             piece.style.top = (r * size + (Math.random() * 160 - 80)) + "px";
             piece.dataset.x = c * size; 
@@ -266,10 +268,12 @@ function makeDraggable(el) {
         el.style.zIndex = 100;
         let shiftX = e.clientX - el.getBoundingClientRect().left;
         let shiftY = e.clientY - el.getBoundingClientRect().top;
+        
         document.onpointermove = (e) => {
             el.style.left = (e.clientX - shiftX - document.getElementById('puzzle-container').offsetLeft) + 'px';
             el.style.top = (e.clientY - shiftY - document.getElementById('puzzle-container').offsetTop) + 'px';
         };
+        
         document.onpointerup = () => {
             document.onpointermove = null;
             el.style.zIndex = 20;
@@ -287,20 +291,29 @@ function makeDraggable(el) {
 function checkWin() {
     const snapped = document.querySelectorAll('.piece.snapped');
     if (snapped.length === rows * cols) {
+        const container = document.getElementById('puzzle-container');
+        
+        // --- MASTER FUSION LOGIC ---
         setTimeout(() => {
-            document.getElementById('status-pixel').innerHTML = "[SYSTEM: DATA FUSED SUCCESSFULLY]";
-            const pieces = document.querySelectorAll('.piece');
-            const container = document.getElementById('puzzle-container');
-            
-            // FUSION FIX: Remove the clip-paths and shadow so it's a perfect image
-            pieces.forEach(p => {
-                p.classList.add('fused');
-                const img = p.querySelector('image');
-                img.setAttribute('clip-path', 'none'); // This removes the jigsaw edges
-            });
+            container.classList.add('fused');
+            document.getElementById('status-pixel').innerHTML = "[SYSTEM: IMAGE STRUCTURE STABILIZED]";
 
-            container.style.boxShadow = "0 0 80px var(--gold)";
-            container.style.border = "2px solid var(--gold)";
+            snapped.forEach(p => {
+                p.style.filter = "none"; // Remove shadow so they blend
+                const img = p.querySelector('image');
+                // Remove clip-path to make the piece a perfect square (removes tabs)
+                img.setAttribute('clip-path', 'none'); 
+                // Adjust position to compensate for the removed clip-path offset
+                img.setAttribute('x', `-${p.dataset.x}`);
+                img.setAttribute('y', `-${p.dataset.y}`);
+                // Ensure SVG itself doesn't overflow
+                const svg = p.querySelector('svg');
+                svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+                svg.setAttribute('width', size);
+                svg.setAttribute('height', size);
+                p.style.top = p.dataset.y + 'px';
+                p.style.left = p.dataset.x + 'px';
+            });
 
             setTimeout(() => {
                 const look = document.getElementById('look-around');
