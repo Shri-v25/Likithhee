@@ -32,93 +32,123 @@
         /* Intro Section */
         #intro {
             position: relative;
-            z-index: 2;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             text-align: center;
-            transition: opacity 1s ease;
+            transition: opacity 0.8s ease;
         }
 
+        /* Transparent Mickey sourced online */
         .mickey-img {
-            width: 250px;
-            filter: drop-shadow(0 0 20px var(--gold));
+            width: 280px;
+            filter: drop-shadow(0 0 25px var(--gold));
             animation: float 4s ease-in-out infinite;
         }
 
         h1 {
             font-family: 'Bebas Neue';
-            font-size: 5rem;
+            font-size: clamp(3rem, 8vw, 6rem);
             letter-spacing: 10px;
             color: var(--gold);
             margin: 10px 0;
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
         }
+
+        .start-btn {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 15px 50px;
+            font-family: 'Bebas Neue';
+            font-size: 1.8rem;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: 0.3s;
+            letter-spacing: 3px;
+        }
+
+        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px var(--gold); }
 
         /* Puzzle Area */
         #game-wrap {
-            display: none;
+            display: none; /* Hidden initially */
+            opacity: 0; 
             position: relative;
-            z-index: 2;
+            z-index: 5;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            transition: opacity 1s ease;
         }
 
         #puzzle-container {
             position: relative;
-            width: 450px;
-            height: 450px;
-            background: rgba(255,255,255,0.02);
-            transition: all 1s ease;
+            width: 450px; /* 3 * 150px */
+            height: 450px; /* 3 * 150px */
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #333;
+        }
+        
+        /* State when puzzle is complete */
+        #puzzle-container.solved {
+            background-image: url('gift.jpeg'); /* Show full image */
+            background-size: cover;
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 50px var(--gold);
         }
 
         .piece {
             position: absolute;
             cursor: grab;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8));
-            transition: filter 0.3s, transform 0.3s;
+            transition: transform 0.2s;
+            z-index: 20;
         }
+        
+        .piece:active { cursor: grabbing; z-index: 30; }
 
         /* Video Game Pixel Animation */
         #pixel-win {
             display: none;
             position: fixed;
-            top: 40%; left: 50%;
+            top: 30%; left: 50%;
             transform: translate(-50%, -50%);
             font-family: 'Press Start 2P', cursive;
             color: var(--pixel-green);
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 4vw, 3rem);
             text-shadow: 4px 4px black;
             z-index: 100;
             text-align: center;
+            width: 100%;
         }
 
         /* Heartwarming Letter */
         #letter-reveal {
             display: none;
+            opacity: 0;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 101;
-            display: flex;
+            background: rgba(0,0,0,0.95);
+            z-index: 200;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            opacity: 0;
             transition: opacity 2s ease;
-            padding: 40px;
+            padding: 20px;
             box-sizing: border-box;
         }
 
         .sister-msg {
-            max-width: 700px;
+            max-width: 800px;
             font-family: 'Great Vibes', cursive;
-            font-size: 2.2rem;
+            font-size: clamp(2rem, 5vw, 3rem);
             line-height: 1.4;
             color: #fdfdfd;
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
@@ -126,26 +156,22 @@
 
         .one-last-thing {
             font-family: 'Bebas Neue';
-            font-size: 4rem;
+            font-size: clamp(3rem, 6vw, 5rem);
             color: var(--gold);
             margin-top: 30px;
             letter-spacing: 5px;
         }
 
-        /* Keyframes */
+        /* Animations */
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes pixelPop { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
         
         .glitter {
             position: fixed;
-            background: var(--gold);
-            border-radius: 50%;
+            background: var(--pixel-green);
+            box-shadow: 0 0 10px var(--pixel-green);
             pointer-events: none;
-            z-index: 200;
-        }
-
-        @keyframes pixelPop {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
+            z-index: 150;
         }
     </style>
 </head>
@@ -154,14 +180,14 @@
 <div class="overlay"></div>
 
 <div id="intro">
-    <img src="mickey.png" class="mickey-img">
+    <img src="https://upload.wikimedia.org/wikipedia/en/d/d4/Mickey_Mouse.png" class="mickey-img" alt="Mickey">
     <h1>HAPPY BIRTHDAY LIKHITHEEE !!</h1>
-    <p class="sister-msg" style="font-size: 1.5rem; font-family: 'Montserrat';">I have a surprise... but you gotta earn it.</p>
-    <button style="background:none; border:1px solid var(--gold); color:var(--gold); padding:15px 40px; font-family:'Bebas Neue'; font-size:1.5rem; cursor:pointer; margin-top:20px;" onclick="startChallenge()">START CHALLENGE</button>
+    <p style="font-size: 1.8rem; font-family: 'Great Vibes'; margin-top: -10px;">A special vibe for a legend...</p>
+    <button class="start-btn" onclick="startChallenge()">START CHALLENGE</button>
 </div>
 
 <div id="game-wrap">
-    <div id="pixel-win">GIFT UNLOCKED!<br><span style="font-size: 1rem; color: white;">Merging data...</span></div>
+    <div id="pixel-win">MISSION COMPLETE!<br><span style="font-size: 1rem; font-family: 'Montserrat'; color: white; letter-spacing: 2px;">Fusing gift data...</span></div>
     <div id="puzzle-container"></div>
 </div>
 
@@ -170,25 +196,37 @@
         "Likhith, even though we’re apart right now, I miss you more than words can say. Seeing you grow up has been my greatest joy. I love you to the core, and no matter how old you get, or where life takes you..."
     </div>
     <div class="one-last-thing">YOU WILL FOREVER BE MY 1ST CHILD.</div>
-    <p style="margin-top: 50px; font-family: 'Montserrat'; letter-spacing: 5px; color: var(--gold); font-weight: 600;">NOW LOOK NEXT TO YOU... 🎁</p>
+    <p style="margin-top: 50px; font-family: 'Montserrat'; letter-spacing: 5px; color: var(--gold); font-weight: 600; font-size: 1.2rem;">NOW LOOK NEXT TO YOU... 🎁</p>
 </div>
 
 <script>
-const rows = 3, cols = 3, size = 150, tabSize = 30;
-const imgUrl = 'gift.jpeg';
+const rows = 3, cols = 3;
+const size = 150; // 150px * 3 = 450px total width
+const tabSize = 30;
+const imgUrl = 'gift.jpeg'; // MAKE SURE THIS NAME IS EXACT
 
 function startChallenge() {
-    document.getElementById('intro').style.opacity = '0';
+    const intro = document.getElementById('intro');
+    const gameWrap = document.getElementById('game-wrap');
+
+    intro.style.opacity = '0';
+    
     setTimeout(() => {
-        document.getElementById('intro').style.display = 'none';
-        document.getElementById('game-wrap').style.display = 'flex';
+        intro.style.display = 'none';
+        gameWrap.style.display = 'flex';
+        // Force reflow before fading in
+        void gameWrap.offsetWidth; 
+        gameWrap.style.opacity = '1';
         createPuzzle();
-    }, 1000);
+    }, 800);
 }
 
 function createPuzzle() {
     const container = document.getElementById('puzzle-container');
+    container.innerHTML = ''; // Clear existing
     let edges = [];
+
+    // Generate Edges
     for (let r = 0; r < rows; r++) {
         edges[r] = [];
         for (let c = 0; c < cols; c++) {
@@ -201,6 +239,7 @@ function createPuzzle() {
         }
     }
 
+    // Create Pieces
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const piece = document.createElement('div');
@@ -208,9 +247,13 @@ function createPuzzle() {
             const path = createPiecePath(edges[r][c]);
             piece.innerHTML = `<svg width="${size + tabSize*2}" height="${size + tabSize*2}" viewBox="-${tabSize} -${tabSize} ${size + tabSize*2} ${size + tabSize*2}"><defs><clipPath id="c${r}${c}"><path d="${path}" /></clipPath></defs><image xlink:href="${imgUrl}" x="-${c * size}" y="-${r * size}" width="${cols * size}" height="${rows * size}" clip-path="url(#c${r}${c})" /></svg>`;
             
-            piece.style.left = (Math.random() * 200) + "px";
-            piece.style.top = (Math.random() * 200) + "px";
-            piece.dataset.x = c * size; piece.dataset.y = r * size;
+            // Scatter around the center relative to container size (450x450)
+            const scatterRange = 100;
+            piece.style.left = (c * size + (Math.random() * scatterRange - scatterRange/2)) + "px";
+            piece.style.top = (r * size + (Math.random() * scatterRange - scatterRange/2)) + "px";
+            
+            piece.dataset.x = c * size; 
+            piece.dataset.y = r * size;
             
             makeDraggable(piece);
             container.appendChild(piece);
@@ -218,6 +261,7 @@ function createPuzzle() {
     }
 }
 
+// --- Jigsaw Math ---
 function createPiecePath(e) {
     let p = `M 0 0`;
     p += ` L ${size/2 - tabSize} 0 C ${size/2 - tabSize/2} ${-tabSize*e.top} ${size/2 + tabSize/2} ${-tabSize*e.top} ${size/2 + tabSize} 0 L ${size} 0`;
@@ -227,58 +271,69 @@ function createPiecePath(e) {
     return p;
 }
 
+// --- Drag & Drop Logic ---
 function makeDraggable(el) {
     el.onpointerdown = (e) => {
+        e.preventDefault();
         let shiftX = e.clientX - el.getBoundingClientRect().left;
         let shiftY = e.clientY - el.getBoundingClientRect().top;
+        el.style.zIndex = 50; // Bring to front while dragging
+
         document.onpointermove = (e) => {
-            el.style.left = (e.clientX - shiftX - document.getElementById('puzzle-container').offsetLeft) + 'px';
-            el.style.top = (e.clientY - shiftY - document.getElementById('puzzle-container').offsetTop) + 'px';
+            let newLeft = e.clientX - shiftX - document.getElementById('puzzle-container').offsetLeft;
+            let newTop = e.clientY - shiftY - document.getElementById('puzzle-container').offsetTop;
+            el.style.left = newLeft + 'px';
+            el.style.top = newTop + 'px';
         };
+
         document.onpointerup = () => {
             document.onpointermove = null;
-            if (Math.abs(parseInt(el.style.left) - el.dataset.x) < 20 && Math.abs(parseInt(el.style.top) - el.dataset.y) < 20) {
+            el.style.zIndex = 20; // Reset z-index
+            // Snap tolerance (30px)
+            if (Math.abs(parseInt(el.style.left) - el.dataset.x) < 30 && Math.abs(parseInt(el.style.top) - el.dataset.y) < 30) {
                 el.style.left = el.dataset.x + 'px';
                 el.style.top = el.dataset.y + 'px';
-                el.style.pointerEvents = 'none';
-                el.style.filter = "none";
+                el.style.pointerEvents = 'none'; // Lock piece
                 checkWin();
             }
         };
     };
 }
 
+// --- Win Condition ---
 function checkWin() {
     const locked = Array.from(document.querySelectorAll('.piece')).filter(p => p.style.pointerEvents === 'none');
     if (locked.length === rows * cols) {
-        // Pixel Animation Sequence
-        const winBanner = document.getElementById('pixel-win');
-        winBanner.style.display = 'block';
-        
-        // Remove SVG gaps
-        document.querySelectorAll('svg').forEach(s => s.style.transform = "scale(1.01)");
-        
-        // Glitters
-        for(let i=0; i<100; i++) spawnGlitter();
+        // 1. Show Pixel Win Text
+        document.getElementById('pixel-win').style.display = 'block';
+        for(let i=0; i<80; i++) spawnGlitter();
 
         setTimeout(() => {
-            document.getElementById('game-wrap').style.opacity = '0';
-            const letter = document.getElementById('letter-reveal');
-            letter.style.display = 'flex';
-            setTimeout(() => letter.style.opacity = '1', 100);
-        }, 3000);
+            // 2. Fuse Pieces: Hide pieces, show full image background
+            document.querySelectorAll('.piece').forEach(p => p.style.display = 'none');
+            document.getElementById('puzzle-container').classList.add('solved');
+            document.getElementById('pixel-win').innerHTML = "GIFT FUSED.";
+            
+            setTimeout(() => {
+                 // 3. Transition to Letter
+                document.getElementById('game-wrap').style.opacity = '0';
+                const letter = document.getElementById('letter-reveal');
+                letter.style.display = 'flex';
+                setTimeout(() => letter.style.opacity = '1', 100);
+            }, 2500);
+        }, 2000);
     }
 }
 
 function spawnGlitter() {
     const g = document.createElement('div');
     g.className = 'glitter';
-    g.style.width = g.style.height = Math.random() * 6 + 'px';
+    g.style.width = g.style.height = Math.random() * 8 + 2 + 'px';
     g.style.left = Math.random() * 100 + 'vw';
     g.style.top = Math.random() * 100 + 'vh';
-    g.style.animation = `pixelPop ${Math.random()*1 + 1}s forwards`;
+    g.style.animation = `pixelPop ${Math.random()*1 + 0.5}s forwards`;
     document.body.appendChild(g);
-    setTimeout(() => g.remove(), 2000);
+    setTimeout(() => g.remove(), 1500);
 }
 </script>
 </body>
